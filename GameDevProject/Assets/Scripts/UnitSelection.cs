@@ -13,6 +13,7 @@ public class UnitSelection : MonoBehaviour {
 	private bool isSelecting;
 	private Vector3 mousePosition;
 	private Camera mainCamera;
+	public GameObject test;
 
 	/// <summary>
 	/// Intializes the selection box to inactivate
@@ -33,9 +34,10 @@ public class UnitSelection : MonoBehaviour {
 			this.mousePosition = Input.mousePosition;
 			this.selectionBox.gameObject.SetActive(true);
 		} else if (Input.GetMouseButtonUp(0)) {
+			Debug.Log(test.GetComponent<Collider2D>().transform.localPosition);
 			this.isSelecting = false;
 			this.selectionBox.gameObject.SetActive(false);
-			GetSelectableObjectsWithinBounds();
+			this.GetSelectableObjectsWithinBounds();
 		}
 		if (this.isSelecting) {
 			this.DrawSelectionBox();
@@ -85,8 +87,10 @@ public class UnitSelection : MonoBehaviour {
 	/// Returns the collection.
 	/// </returns>
 	public GameObject[] GetSelectableObjectsWithinBounds() {
-		Bounds viewportBounds = Utils.GetViewportBounds(mainCamera, mousePosition, Input.mousePosition);
-		Collider2D[] colliders = Physics2D.OverlapAreaAll(viewportBounds.min, viewportBounds.max, LayerMask.GetMask(Global.Selectable), int.MinValue, int.MaxValue);
+		Bounds worldPointBounds = Utils.GetWorldPointBounds(mainCamera, mousePosition, Input.mousePosition);
+		Debug.Log(mousePosition.ToString());
+		Collider2D[] colliders = Physics2D.OverlapAreaAll(worldPointBounds.min, worldPointBounds.max, LayerMask.GetMask(Global.Selectable));
+		Debug.Log(colliders.Length);
 		GameObject[] selected = new GameObject[colliders.Length];
 		for (int i = 0; i < colliders.Length; i++) {
 			selected[i] = colliders[i].gameObject;

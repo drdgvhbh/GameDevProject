@@ -401,6 +401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionBox: {fileID: 1928709090}
+  test: {fileID: 479404161}
 --- !u!1 &1920379322
 GameObject:
   m_ObjectHideFlags: 0
