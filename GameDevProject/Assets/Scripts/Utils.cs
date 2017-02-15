@@ -6,19 +6,25 @@ using UnityEngine;
 /// Utility Class
 /// </summary>
 public static class Utils {
+	private static Bounds bounds = new Bounds();
 	/// <summary>
-	/// A texture used specifically for the unit selection box
+	/// Computes a rectuglar bound in 2D space on the camera viewport using two points in 3D space. 
 	/// </summary>
-	public static Texture2D whiteTexture {
-		set {
-			if (whiteTexture == null) {
-				whiteTexture = new Texture2D(1, 1);
-				whiteTexture.SetPixel(0, 0, Color.white);
-				whiteTexture.Apply();
-			}
-		}
-		get {
-			return whiteTexture;
-		}
+	/// <param name="camera">Viewport Camera</param>
+	/// <param name="screenPosition1">First Corner</param>
+	/// <param name="screenPosition2">Second Corner</param>
+	/// <returns>Returns </returns>
+	public static Bounds GetViewportBounds(Camera camera, Vector3 screenPosition1, Vector3 screenPosition2) {
+		Vector3 v1 = camera.ScreenToViewportPoint(screenPosition1);
+		Vector3 v2 = camera.ScreenToViewportPoint(screenPosition2);
+		Vector3 min = Vector3.Min(v1, v2);
+		Vector3 max = Vector3.Max(v1, v2);
+		min.z = camera.nearClipPlane;
+		max.z = camera.farClipPlane;
+
+		bounds.SetMinMax(min, max);
+
+		return bounds;
 	}
+
 }

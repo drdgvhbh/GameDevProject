@@ -18,31 +18,31 @@ public class UnitSelection : MonoBehaviour {
 	/// Intializes the selection box to inactivate
 	/// </summary>
 	private void Start() {
+		mainCamera = Camera.main;
 		this.isSelecting = false;
 		this.selectionBox.gameObject.SetActive(false);
 	}
 
 	/// <summary>
 	/// Activates the selection box if the left mouse button is pressed down.
+	/// Otherwise, it disables it.
 	/// </summary>
 	private void Update() {
 		if (Input.GetMouseButtonDown(0)) {
 			this.isSelecting = true;
 			this.mousePosition = Input.mousePosition;
-			Debug.Log(this.mousePosition);
-			Debug.Log("Box" + selectionBox.localPosition);
 			this.selectionBox.gameObject.SetActive(true);
 		} else if (Input.GetMouseButtonUp(0)) {
 			this.isSelecting = false;
 			this.selectionBox.gameObject.SetActive(false);
+			GetSelectableObjectsWithinBounds();
 		}
-
 		if (this.isSelecting) {
 			this.DrawSelectionBox();
 		}
 	}
 	/// <summary>
-	/// Draws the selection box again to prevent it from wobbling
+	/// Draws the selection box again to prevent it from wobbling on the screen.
 	/// </summary>
 	private void LateUpdate() {
 		if (this.isSelecting) {
@@ -51,7 +51,7 @@ public class UnitSelection : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Draws the selection box on the screen.
+	/// Draws the selection box on the screen based on user mouse input.
 	/// </summary>
 	private void DrawSelectionBox() {
 		Vector2 hypotenuse = new Vector2(Input.mousePosition.x - this.mousePosition.x, Input.mousePosition.y - this.mousePosition.y);
@@ -76,5 +76,22 @@ public class UnitSelection : MonoBehaviour {
 
 		selectionBox.localPosition = boxAnchor;
 		selectionBox.sizeDelta = sizeDelta;
+	}
+
+	/// <summary>
+	/// Finds the collection of selectable GameObjects within the selection box.
+	/// </summary>
+	/// <returns>
+	/// Returns the collection.
+	/// </returns>
+	public GameObject[] GetSelectableObjectsWithinBounds() {
+		Bounds viewportBounds = Utils.GetViewportBounds(mainCamera, mousePosition, Input.mousePosition);
+		Collider2D[] colliders = Physics2D.OverlapAreaAll(viewportBounds.min, viewportBounds.max, LayerMask.GetMask(Global.Selectable), int.MinValue, int.MaxValue);
+		GameObject[] selected = new GameObject[colliders.Length];
+		for (int i = 0; i < colliders.Length; i++) {
+			selected[i] = colliders[i].gameObject;
+			Debug.Log(selected[i].name);
+		}
+		return selected;
 	}
 }
