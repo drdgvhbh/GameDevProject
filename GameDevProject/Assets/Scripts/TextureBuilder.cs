@@ -10,10 +10,11 @@ public class TextureBuilder : MonoBehaviour {
 	private MeshBuilder mb;
 	// Use this for initialization
 	void Start () {
-		mb = this.GetComponentInParent<MeshBuilder>();
+		
 	}
 
 	public void BuildTexture() {
+		mb = this.GetComponentInParent<MeshBuilder>();
 		int numTilesPerRow = terrainTiles.width / tileResolution;
 		int numRows = terrainTiles.height / tileResolution;
 
@@ -23,7 +24,9 @@ public class TextureBuilder : MonoBehaviour {
 
 		for (int y = 0; y < mb.sizeY; y++) {
 			for (int x = 0; x < mb.sizeX; x++) {
-				Color[] p = terrainTiles.GetPixels(300, 450, tileResolution, tileResolution);
+				int terrainTileOffset = Random.Range(0, 16) * tileResolution;
+				int terrainTileOffset2 = Random.Range(0, 16) * tileResolution;
+				Color[] p = terrainTiles.GetPixels(terrainTileOffset, terrainTileOffset2, tileResolution, tileResolution);
 				texture.SetPixels(x * tileResolution, y * tileResolution, tileResolution, tileResolution, p);
 			}
 		}
